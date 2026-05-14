@@ -10,6 +10,7 @@ interface ToolbarProps {
   year: number;
   availableYears: number[];
   onYearChange: (year: number) => void;
+  title: string;
 }
 
 const Toolbar = ({
@@ -22,11 +23,12 @@ const Toolbar = ({
   year,
   availableYears,
   onYearChange,
+  title,
 }: ToolbarProps) => {
   return (
     <div className="bg-white rounded-lg shadow-lg p-4 mb-4">
       <h1 className="text-2xl font-bold text-center mb-2 text-gray-800">
-        Carnival Calendar Planner
+        {title || "Carnival Calendar Planner"}
       </h1>
       <p className="text-sm text-center text-gray-600 mb-4">
         Tap a date, then select flags to mark it

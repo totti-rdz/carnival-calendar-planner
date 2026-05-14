@@ -17,6 +17,7 @@ function App() {
   const initialWeekDays =
     initialParams.get("weekDays") === "true" || isStaticMode;
   const initialYear = Number(initialParams.get("year")) || 2026;
+  const initialTitle = initialParams.get("title") || "";
   let initialDates: MarkedDates = {};
   let needsUrlMigration = false;
   try {
@@ -37,6 +38,7 @@ function App() {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [showWeekDays, setShowWeekDays] = useState(initialWeekDays);
+  const [title, setTitle] = useState(initialTitle);
 
   // Sync state to URL whenever markedDates, showWeekDays, or year change
   useEffect(() => {
@@ -52,6 +54,9 @@ function App() {
     if (showWeekDays) {
       parts.push("weekDays=true");
     }
+    if (title) {
+      parts.push(`title=${encodeURIComponent(title)}`);
+    }
     if (isStaticMode) {
       parts.push("static=true");
     }
@@ -61,7 +66,7 @@ function App() {
       ? `${window.location.pathname}?${query}`
       : window.location.pathname;
     window.history.replaceState(null, "", newUrl);
-  }, [markedDates, showWeekDays, isStaticMode, year]);
+  }, [markedDates, showWeekDays, isStaticMode, year, title]);
 
   const handleDateClick = (dateStr: string, flagId: string) => {
     setMarkedDates((prev: MarkedDates) => {
@@ -119,12 +124,16 @@ function App() {
     setShowRangeModal(false);
   };
 
-  const createShareableLink = (isStatic: boolean) => {
+  const createShareableLink = (isStatic: boolean, linkTitle: string) => {
+    setTitle(linkTitle);
     const encoded = encodeDates(markedDates);
     const staticParam = isStatic ? "&static=true" : "";
     const weekDaysParam = isStatic || showWeekDays ? "&weekDays=true" : "";
     const yearParam = year !== 2026 ? `&year=${year}` : "";
-    const url = `${window.location.origin}${window.location.pathname}?dates=${encoded}${yearParam}${staticParam}${weekDaysParam}`;
+    const titleParam = linkTitle
+      ? `&title=${encodeURIComponent(linkTitle)}`
+      : "";
+    const url = `${window.location.origin}${window.location.pathname}?dates=${encoded}${yearParam}${titleParam}${staticParam}${weekDaysParam}`;
 
     // Copy to clipboard first
     navigator.clipboard.writeText(url).then(() => {
@@ -135,6 +144,9 @@ function App() {
     // Redirect to the URL
     window.location.href = url;
   };
+
+  console.log("+++++++++++++++++++++");
+  console.log("title", title);
 
   return (
     <div className="min-h-screen bg-gray-100 py-4 px-2">
@@ -150,7 +162,16 @@ function App() {
             year={year}
             availableYears={AVAILABLE_YEARS}
             onYearChange={setYear}
+            title={title}
           />
+        )}
+
+        {isStaticMode && title && (
+          <div className="bg-white rounded-lg shadow-lg p-4 mb-4">
+            <h1 className="text-2xl font-bold text-center text-gray-800">
+              {title}
+            </h1>
+          </div>
         )}
 
         <Calendar
@@ -175,6 +196,7 @@ function App() {
           <StaticLinkModal
             onCreateLink={createShareableLink}
             onClose={() => setShowStaticLinkModal(false)}
+            currentTitle={title}
           />
         )}
 
