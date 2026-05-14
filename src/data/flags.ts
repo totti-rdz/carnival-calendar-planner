@@ -21,4 +21,5 @@ export const availableFlags: Flag[] = [
   { id: 'jm', name: 'Jamaica', emoji: '🇯🇲' },
   { id: 'bb', name: 'Barbados', emoji: '🇧🇧' },
   { id: 'ag', name: 'Antigua and Barbuda', emoji: '🇦🇬' },
+  { id: 'question', name: 'Question Mark', emoji: '❓' },
 ]
