@@ -145,9 +145,6 @@ function App() {
     window.location.href = url;
   };
 
-  console.log("+++++++++++++++++++++");
-  console.log("title", title);
-
   return (
     <div className="min-h-screen bg-gray-100 py-4 px-2">
       <div className="max-w-7xl mx-auto">
